@@ -14,36 +14,39 @@ library(stringr)
 #' @return A tibble representing the initial state of the new loans.
 #'
 originate_loans <- function(vintage_date, n_loans, product_params, segment_params, portfolio_name) {
-  
+
   # 1. Generate unique loan IDs
   loan_ids <- str_c(
     "L",
     format(vintage_date, "%Y%m"),
     str_pad(1:n_loans, 4, pad = "0")
   )
-  
+
   # 2. Calculate loan-specific characteristics based on averages
   # We use rnorm to create some variance around the provided averages.
   max_amount <- product_params$max_amount
-  
+
   loan_limits <- rnorm(
     n = n_loans,
     mean = max_amount * segment_params$avg_limit_pct_of_max,
     sd = max_amount * 0.05 # Assume a 5% standard deviation for variation
   )
-  
+
   # Ensure limit is within product min/max
   loan_limits <- pmax(pmin(loan_limits, max_amount), product_params$min_amount)
-  
-  initial_principals <- loan_limits * rnorm(
-    n = n_loans,
-    mean = segment_params$avg_first_balance_pct_of_limit,
-    sd = 0.02 # Assume a small 2% SD for variation
+
+  initial_principals <- round(
+      loan_limits * rnorm(
+        n = n_loans,
+        mean = segment_params$avg_first_balance_pct_of_limit,
+        sd = 0.02 # Assume a small 2% SD for variation
+      ),
+      -2
   )
-  
+
   # Ensure balance does not exceed the limit
   initial_principals <- pmin(initial_principals, loan_limits)
-  
+
   # 3. Assemble the initial state tibble
   new_vintage_df <- tibble(
     # --- Identifiers and Static Characteristics ---
@@ -56,7 +59,7 @@ originate_loans <- function(vintage_date, n_loans, product_params, segment_param
     loan_limit = loan_limits,
     initial_term = product_params$contract_duration,
     interest_rate_period = product_params$interest_per_period,
-    
+
     # --- Initial Time-Varying State (for period 1) ---
     period_date = vintage_date,
     period = 1,
@@ -67,6 +70,6 @@ originate_loans <- function(vintage_date, n_loans, product_params, segment_param
     payment = 0,
     status = "Active"
   )
-  
+
   return(new_vintage_df)
 }

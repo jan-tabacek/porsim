@@ -5,41 +5,62 @@ engine: knitr
 
 ## 1. Introduction
 
-This document shows a basic example of how to originate a vintage of loans
-using the `portfolioSim` package.
+This document shows a basic example of how to originate and simulate a vintage of loans using the `porsim` package.
 
-## 2. Define Parameters
+## 2. Load Package
 
-First, we define the parameters for our product and client segment.
+First, we load the `porsim` package to make its functions available.
 
 ```{r}
-# Define the parameters you provided
+#| label: do-imports
+
+library(porsim)
+library(tidyverse)
+library(stringr)
+```
+
+
+```{r}
+#| label: define-parameters
+
+# Define product parameters
 product_mtp <- list(
   product_name = "MTP",
   min_amount = 1,
   max_amount = 1000,
-  contract_duration = 5, # number of time periods. eventually can be days, but for now period = month
-  periods_till_debt_sell = 3, # periods to wait in default before selling
-  debt_sell_price = 0.6 # percentage from balance for which i can sell defaulted loan
-  # ... etc ...
+  contract_duration = 5, # in months
+  interest_per_period = 0.022,
+  time_periods_till_acceleration = 3
 )
 
+# Define segment parameters
 segment_standard <- list(
   avg_limit_pct_of_max = 0.80,
   avg_first_balance_pct_of_limit = 0.95
+)
+
+initial_vintage <- originate_loans(
+  vintage_date = as.Date("2025-01-31"),
+  n_loans = 5,
+  product_params = product_mtp,
+  segment_params = segment_standard,
+  portfolio_name = "MyFirstPortfolio"
 )
 ```
 
 
 ```{r}
-# Generate 100 new loans for January 2025
-january_vintage <- originate_loans(
-  vintage_date = as.Date("2025-01-31"),
-  n_loans = 3,
-  # ... etc ...
-)
+#| label: create-portfolio
 
-# View the result
-print(january_vintage)
+portfolio_history <- run_simulation(initial_vintage)
+```
+
+
+```{r}
+#| label: view-portfolio
+#| results: asis
+
+print(portfolio_history, n = 20) # Print the first 20 rows
 
 ```
+
