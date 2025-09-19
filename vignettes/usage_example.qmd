@@ -28,8 +28,8 @@ library(stringr)
 product_mtp <- list(
   product_name = "MTP",
   min_amount = 1,
-  max_amount = 1000,
-  contract_duration = 5, # in months
+  max_amount = 100,
+  contract_duration = 6,
   interest_per_period = 0.022,
   time_periods_till_acceleration = 3
 )
@@ -40,19 +40,33 @@ segment_standard <- list(
   avg_first_balance_pct_of_limit = 0.95
 )
 
+# Create a sales plan list
+# This plan will create 3 vintages:
+# - 1 loan in Jan 2025
+# - 2 loans in Feb 2025
+# - 3 loans in Mar 2025
+sales_plan_list <- list(
+  q1_2025_sales = list(
+    product_params = product_mtp,
+    segment_params = segment_standard,
+    monthly_loans = c(1, 2, 3), 
+    vintage_date = as.Date("2025-01-31")
+  )
+)
+
 ```
 
 
 ```{r}
 #| label: create-vintages
 
-initial_vintage <- originate_loans(
-  vintage_date = as.Date("2025-01-31"),
-  n_loans = 5,
-  product_params = product_mtp,
-  segment_params = segment_standard,
+initial_portfolio <- generate_sales(
+  sales_plans = sales_plan_list,
   portfolio_name = "MyFirstPortfolio"
 )
+
+# See the generated loans (6 total)
+print(initial_portfolio)
 
 ```
 
@@ -60,7 +74,7 @@ initial_vintage <- originate_loans(
 ```{r}
 #| label: create-portfolio
 
-portfolio_history <- run_simulation(initial_vintage)
+portfolio_history <- run_simulation(initial_portfolio)
 
 ```
 
@@ -69,7 +83,8 @@ portfolio_history <- run_simulation(initial_vintage)
 #| label: view-portfolio
 #| results: asis
 
-print(portfolio_history, n = 20) # Print the first 20 rows
+print(portfolio_history[portfolio_history$loan_id == "L2025010001", ])
+# print(portfolio_history, n = 20) # Print the first 20 rows -->
 
 ```
 
