@@ -28,7 +28,7 @@ library(stringr)
 product_mtp <- list(
   product_name = "MTP",
   min_amount = 1,
-  max_amount = 100,
+  max_amount = 1000,
   contract_duration = 6,
   interest_per_period = 0.022,
   time_periods_till_acceleration = 3

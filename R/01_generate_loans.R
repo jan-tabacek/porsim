@@ -38,6 +38,8 @@ originate_loans <- function(vintage_date, n_loans, product_params, segment_param
     mean = max_amount * segment_params$avg_limit_pct_of_max,
     sd = max_amount * 0.05
   )
+  loan_limits <- round(loan_limits, -2)
+
   loan_limits <- pmax(pmin(loan_limits, max_amount), product_params$min_amount)
 
   initial_principals <- loan_limits * rnorm(
@@ -45,6 +47,8 @@ originate_loans <- function(vintage_date, n_loans, product_params, segment_param
     mean = segment_params$avg_first_balance_pct_of_limit,
     sd = 0.02
   )
+  initial_principals <- round(initial_principals, -1)
+
   initial_principals <- pmin(initial_principals, loan_limits)
 
   # 3. Assemble the initial state tibble
