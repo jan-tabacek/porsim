@@ -1,0 +1,38 @@
+/portfolioSim
+|
+├── R/
+│   ├── 00_utils.R              # Helper functions, pipe operators
+│   ├── 01_generate_loans.R     # Functions to generate loans from sales plans
+│   ├── 02_create_vintage.R     # Functions to aggregate loans into vintages
+│   ├── 03_create_portfolio.R   # Functions to build portfolios from vintages
+│   ├── 04_run_experiment.R     # Functions to define and run experiments
+│   ├── 05_analysis_tools.R     # Functions for KPI calculation and comparison
+│   └── 06_reporting.R          # Functions to render the Quarto documents
+|
+├── vignettes/
+│   └── getting_started.qmd     # A tutorial on the end-to-end workflow
+|
+├── tests/
+│   ├── testthat/
+│   │   ├── test-generate_loans.R
+│   │   └── ...                 # Unit tests for each major function
+|
+├── inst/
+│   ├── rmarkdown/
+│   │   └── templates/
+│   │       ├── single_portfolio_inspection/
+│   │       │   ├── skeleton/
+│   │       │   │   └── skeleton.qmd  # The Quarto template itself
+│   │       │   └── template.yaml
+│   │       ├── single_loan_inspection/
+│   │       │   ├── skeleton/
+│   │       │   │   └── skeleton.qmd
+│   │       │   └── template.yaml
+│   │       └── experiment_comparison/
+│   │           ├── skeleton/
+│   │           │   └── skeleton.qmd
+│   │           └── template.yaml
+|
+├── DESCRIPTION
+├── NAMESPACE
+└── portfolioSim.Rproj

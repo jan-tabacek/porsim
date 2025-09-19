@@ -1,0 +1,26 @@
+---
+title: "Getting Started with portfolioSim"
+engine: knitr
+---
+
+## 1. Introduction
+
+This document shows a basic example of how to originate a vintage of loans
+using the `portfolioSim` package.
+
+## 2. Define Parameters
+
+First, we define the parameters for our product and client segment.
+
+```{r}
+# Define the parameters you provided
+product_mtp <- list(
+  product_name = "MTP",
+  min_amount = 1,
+  # ... etc ...
+)
+
+segment_standard <- list(
+  avg_limit_pct_of_max = 0.80,
+  avg_first_balance_pct_of_limit = 0.95
+)
