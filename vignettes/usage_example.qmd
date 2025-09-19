@@ -17,6 +17,10 @@ First, we define the parameters for our product and client segment.
 product_mtp <- list(
   product_name = "MTP",
   min_amount = 1,
+  max_amount = 1000,
+  contract_duration = 5, # number of time periods. eventually can be days, but for now period = month
+  periods_till_debt_sell = 3, # periods to wait in default before selling
+  debt_sell_price = 0.6 # percentage from balance for which i can sell defaulted loan
   # ... etc ...
 )
 
@@ -24,3 +28,18 @@ segment_standard <- list(
   avg_limit_pct_of_max = 0.80,
   avg_first_balance_pct_of_limit = 0.95
 )
+```
+
+
+```{r}
+# Generate 100 new loans for January 2025
+january_vintage <- originate_loans(
+  vintage_date = as.Date("2025-01-31"),
+  n_loans = 3,
+  # ... etc ...
+)
+
+# View the result
+print(january_vintage)
+
+```
