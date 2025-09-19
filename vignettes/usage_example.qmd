@@ -17,6 +17,7 @@ First, we load the `porsim` package to make its functions available.
 library(porsim)
 library(tidyverse)
 library(stringr)
+
 ```
 
 
@@ -39,6 +40,12 @@ segment_standard <- list(
   avg_first_balance_pct_of_limit = 0.95
 )
 
+```
+
+
+```{r}
+#| label: create-vintages
+
 initial_vintage <- originate_loans(
   vintage_date = as.Date("2025-01-31"),
   n_loans = 5,
@@ -46,6 +53,7 @@ initial_vintage <- originate_loans(
   segment_params = segment_standard,
   portfolio_name = "MyFirstPortfolio"
 )
+
 ```
 
 
@@ -53,6 +61,7 @@ initial_vintage <- originate_loans(
 #| label: create-portfolio
 
 portfolio_history <- run_simulation(initial_vintage)
+
 ```
 
 
