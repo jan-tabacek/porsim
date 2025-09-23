@@ -36,20 +36,19 @@ product_mtp <- list(
 
 # Define segment parameters
 segment_standard <- list(
+  segment_name = "standard_payer", # Add a name for the segment
   avg_limit_pct_of_max = 0.80,
-  avg_first_balance_pct_of_limit = 0.95
+  avg_first_balance_pct_of_limit = 0.95,
+  default_prob = c(0.05, 0.02, 0.01, 0.01, 0.005),
+  debt_sale_recovery_rate = 0.20
 )
 
 # Create a sales plan list
-# This plan will create 3 vintages:
-# - 1 loan in Jan 2025
-# - 2 loans in Feb 2025
-# - 3 loans in Mar 2025
 sales_plan_list <- list(
   q1_2025_sales = list(
     product_params = product_mtp,
     segment_params = segment_standard,
-    monthly_loans = c(1, 2, 3), 
+    monthly_loans = c(100, 100, 100), 
     vintage_date = as.Date("2025-01-31")
   )
 )
@@ -87,4 +86,22 @@ print(portfolio_history[portfolio_history$loan_id == "L2025010001", ])
 # print(portfolio_history, n = 20) # Print the first 20 rows -->
 
 ```
+
+
+```{r}
+#| label: calculate-metrics
+#| tbl-cap: "A summary of the final outcomes for all loans in the simulated portfolio."
+
+# Calculate the final performance metrics
+# portfolio_metrics <- calculate_portfolio_metrics(portfolio_history)
+calculate_portfolio_metrics(portfolio_history)
+# Display the metrics as a table
+# knitr::kable(portfolio_metrics)
+
+```
+
+
+
+
+
 

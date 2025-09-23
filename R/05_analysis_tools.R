@@ -1,9 +1,3 @@
-#' @importFrom dplyr %>% group_by summarise mutate ungroup arrange cumsum filter pull first select any_of across left_join rename case_when
-#' @importFrom tidyr pivot_longer replace_na
-#' @importFrom ggplot2 ggplot aes geom_col geom_line scale_y_continuous labs theme_minimal theme element_text scale_fill_manual scale_color_manual sec_axis
-#' @importFrom scales comma
-NULL
-
 #' Visualize the performance of a simulated portfolio over time.
 #'
 #' @description
@@ -115,4 +109,40 @@ portfolio_view <- function(portfolio_history) {
         legend.box = "horizontal",
         axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)
       )
-  }
+}
+
+
+
+calculate_portfolio_metrics <- function(portfolio_history) {
+
+  # --- 1. Summarize the outcome for each unique loan ---
+  loan_summary <- portfolio_history %>%
+    dplyr::group_by(loan_id) %>%
+    dplyr::summarise(
+      # Check if the loan ever entered a "Defaulted" state
+      ever_defaulted = any(status == "Defaulted"),
+      # Get the final status of the loan
+      final_status = dplyr::last(status),
+      .groups = "drop"
+    )
+
+  # --- 2. Calculate the final metrics based on the loan summary ---
+  metrics <- loan_summary %>%
+    dplyr::summarise(
+      total_loans = dplyr::n_distinct(loan_id),
+
+      # Paid without ever defaulting
+      paid_without_default = sum(final_status == "Paid_Off" & !ever_defaulted),
+
+      # Paid, but only after having been in default at some point
+      # NOTE: Current simulation logic does not allow for this, but the metric is here for future use.
+      paid_after_default = sum(final_status == "Paid_Off" & ever_defaulted),
+
+      # Ended in a "Sold" state
+      defaulted_and_sold = sum(final_status == "Sold")
+    )
+
+  return(metrics)
+}
+
+
