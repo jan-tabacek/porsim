@@ -19,3 +19,14 @@ calculate_pmt <- function(balance, rate, n_periods) {
   # Return a positive value for payment
   return(abs(payment))
 }
+
+
+extend_or_truncate <- function(x, n) {
+  if (length(x) >= n) {
+    # truncate
+    x[1:n]
+  } else {
+    # extend by repeating the last element
+    c(x, rep(tail(x, 1), n - length(x)))
+  }
+}

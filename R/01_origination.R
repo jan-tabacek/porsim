@@ -26,10 +26,10 @@ originate_loans <- function(vintage_date, n_loans, product_params, segment_param
   loan_ids <- stringr::str_c("L", format(vintage_date, "%Y%m"), stringr::str_pad(1:n_loans, 4, pad = "0"))
   max_amount <- product_params$max_amount
 
-  loan_limits <- rnorm(n = n_loans, mean = max_amount * segment_params$avg_limit_pct_of_max, sd = max_amount * 0.05)
+  loan_limits <- round(rnorm(n = n_loans, mean = max_amount * segment_params$avg_limit_pct_of_max, sd = max_amount * 0.05), -2)
   loan_limits <- pmax(pmin(loan_limits, max_amount), product_params$min_amount)
 
-  initial_principals <- loan_limits * rnorm(n = n_loans, mean = segment_params$avg_first_balance_pct_of_limit, sd = 0.02)
+  initial_principals <- round(loan_limits * rnorm(n = n_loans, mean = segment_params$avg_first_balance_pct_of_limit, sd = 0.02), -2)
   initial_principals <- pmin(initial_principals, loan_limits)
 
   # Create a single parameters list that will be assigned to each loan

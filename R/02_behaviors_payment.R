@@ -42,6 +42,8 @@ handle_proper_payment <- function(loans_to_process) {
         closing_balance # Keep existing value if not active
       ),
 
+      closing_balance_calc = dplyr::if_else(closing_balance_calc < 0.01, 0, closing_balance_calc), # Keep existing value if not active
+
       status_calc = dplyr::if_else(
         status == "Active" & closing_balance_calc < 0.01,
         "Paid_Off",

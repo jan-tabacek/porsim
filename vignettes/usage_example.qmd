@@ -14,7 +14,7 @@ First, we load the `porsim` package to make its functions available.
 ```{r}
 #| label: do-imports
 
-library(porsim)
+# library(porsim)
 library(tidyverse)
 library(stringr)
 
@@ -27,9 +27,9 @@ library(stringr)
 # Define product parameters
 product_mtp <- list(
   product_name = "MTP",
-  min_amount = 1,
+  min_amount = 10,
   max_amount = 1000,
-  contract_duration = 6,
+  contract_duration = 1+6, # one for contract creation + number of payments
   interest_per_period = 0.022,
   time_periods_till_acceleration = 3
 )
@@ -40,15 +40,30 @@ segment_standard <- list(
   avg_limit_pct_of_max = 0.80,
   avg_first_balance_pct_of_limit = 0.95,
   default_prob = c(0.05, 0.02, 0.01, 0.01, 0.005),
-  debt_sale_recovery_rate = 0.20
+  debt_sale_recovery_rate = 0.20, 
+  early_repayment_rate = c(0.15, 0.08, 0.04, 0.02, 0.01)
 )
+
+
+
+# Define segment parameters
+segment_pay_early <- list(
+  segment_name = "early_payer", # Add a name for the segment
+  avg_limit_pct_of_max = 0.80,
+  avg_first_balance_pct_of_limit = 0.5,
+  default_prob = c(0.005),
+  debt_sale_recovery_rate = 0.20, 
+  early_repayment_rate = c(0.8, 1)
+)
+
+
 
 # Create a sales plan list
 sales_plan_list <- list(
   q1_2025_sales = list(
     product_params = product_mtp,
     segment_params = segment_standard,
-    monthly_loans = c(100, 100, 100), 
+    monthly_loans = c(10, 10, 10), 
     vintage_date = as.Date("2025-01-31")
   )
 )
@@ -58,6 +73,8 @@ sales_plan_list <- list(
 
 ```{r}
 #| label: create-vintages
+
+set.seed(4567)
 
 initial_portfolio <- generate_sales(
   sales_plans = sales_plan_list,
@@ -73,6 +90,7 @@ print(initial_portfolio)
 ```{r}
 #| label: create-portfolio
 
+set.seed(1234)
 portfolio_history <- run_simulation(initial_portfolio)
 
 ```
@@ -101,6 +119,9 @@ calculate_portfolio_metrics(portfolio_history)
 ```
 
 
+```{r}
+portfolio_view(portfolio_history)
+```
 
 
 
