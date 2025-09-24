@@ -33,7 +33,26 @@ originate_loans <- function(vintage_date, n_loans, product_params, segment_param
   initial_principals <- pmin(initial_principals, loan_limits)
 
   # Create a single parameters list that will be assigned to each loan
+
+
+  # sales_plan_list$q1_2025_sales$segment_params$early_repayment_rate <-
+  #
+  # extend_or_truncate(
+  #   sales_plan_list$q1_2025_sales$segment_params$early_repayment_rate,
+  #   sales_plan_list$q1_2025_sales$product_params$contract_duration-1
+  # )
+
+  # recycle or cut defaults, so that default probs fit payment numbers (pmt_count = contract_duration - 1)
+  segment_params$early_repayment_rate <-
+    extend_or_truncate(
+      segment_params$early_repayment_rate,
+      product_params$contract_duration-1
+    )
+
   params_list <- list(list(product = product_params, segment = segment_params))
+
+
+
 
   tibble::tibble(
     loan_id = loan_ids,
@@ -45,7 +64,7 @@ originate_loans <- function(vintage_date, n_loans, product_params, segment_param
     loan_limit = loan_limits,
     initial_term = product_params$contract_duration,
     interest_rate_period = product_params$interest_per_period,
-    period_date = vintage_date,
+    period_date = ceiling_date(vintage_date, "month") - days(1),
     period = 1,
     opening_balance = initial_principals,
     closing_balance = initial_principals,

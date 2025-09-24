@@ -96,22 +96,6 @@ portfolio_view <- function(portfolio_history) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #' Calculate key performance metrics for a simulated portfolio.
 #'
 #' @param portfolio_history A tibble containing the full simulation results.
@@ -147,3 +131,41 @@ calculate_portfolio_metrics <- function(portfolio_history) {
   return(metrics)
 }
 
+
+
+#' Calculate key performance metrics for a simulated portfolio.
+#'
+#' @param portfolio_history A tibble containing the full simulation results.
+#' @return A tibble with a single row containing the calculated metrics.
+#' @export
+calculate_portfolio_metrics_month <- function(portfolio_history) {
+
+  loan_summary <- portfolio_history %>%
+    dplyr::group_by(loan_id) %>%
+    dplyr::summarise(
+      vintage = min(vintage_date),
+      ever_defaulted = any(status == "Defaulted"),
+      final_status = dplyr::last(status),
+      .groups = "drop"
+    )
+
+  metrics <- loan_summary %>%
+    group_by(vintage) %>%
+    dplyr::summarise(
+      total_loans = dplyr::n_distinct(loan_id),
+
+      # Paid on schedule without ever defaulting
+      paid_on_time = sum(final_status == "Paid_Off" & !ever_defaulted),
+
+      # NEW: Paid early without ever defaulting
+      paid_off_early = sum(final_status == "Paid_Off_Early" & !ever_defaulted),
+
+      # Paid, but only after having been in default at some point
+      paid_after_default = sum(final_status %in% c("Paid_Off", "Paid_Off_Early") & ever_defaulted),
+
+      # Ended in a "Sold" state
+      defaulted_and_sold = sum(final_status == "Sold")
+    )
+
+  return(metrics)
+}

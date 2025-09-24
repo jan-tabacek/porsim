@@ -1,5 +1,5 @@
 ---
-title: "Getting Started with portfolioSim"
+title: "Simulate IL portfolio"
 engine: knitr
 ---
 
@@ -26,35 +26,33 @@ library(stringr)
 
 # Define product parameters
 product_mtp <- list(
-  product_name = "MTP",
-  min_amount = 10,
-  max_amount = 1000,
-  contract_duration = 1+6, # one for contract creation + number of payments
-  interest_per_period = 0.022,
+  product_name = "IL",
+  min_amount = 1000,
+  max_amount = 250000,
+  contract_duration = 1+24, # one for contract creation + number of payments
+  interest_per_period = 0.35/12, # APR / 12 because currently, period is month
   time_periods_till_acceleration = 3
 )
 
 # Define segment parameters
 segment_standard <- list(
-  segment_name = "standard_payer", # Add a name for the segment
-  avg_limit_pct_of_max = 0.80,
-  avg_first_balance_pct_of_limit = 0.95,
-  default_prob = c(0.15, 0.12, 0.1, 0.01, 0.5),
-  debt_sale_recovery_rate = 0.20, 
+  segment_name = "standard_client", # Add a name for the segment
+  avg_limit_pct_of_max = 0.50,
+  avg_first_balance_pct_of_limit = 0.56,
+  default_prob = c(0.05, 0.02, 0.01, 0.005, 0.002),
+  debt_sale_recovery_rate = 0.65, 
   early_repayment_rate = c(0.15, 0.08, 0.04, 0.02, 0.01)
 )
 
-
-
-# Define segment parameters
-segment_pay_early <- list(
-  segment_name = "early_payer", # Add a name for the segment
-  avg_limit_pct_of_max = 0.80,
-  avg_first_balance_pct_of_limit = 0.5,
-  default_prob = c(0.005),
-  debt_sale_recovery_rate = 0.20, 
-  early_repayment_rate = c(0.8, 1)
-)
+# # Define segment parameters
+# segment_pay_early <- list(
+#   segment_name = "early_payer", # Add a name for the segment
+#   avg_limit_pct_of_max = 0.80,
+#   avg_first_balance_pct_of_limit = 0.5,
+#   default_prob = c(0.005),
+#   debt_sale_recovery_rate = 0.20, 
+#   early_repayment_rate = c(0.8, 1)
+# )
 
 
 
@@ -63,16 +61,17 @@ sales_plan_list <- list(
   q1_2025_sales = list(
     product_params = product_mtp,
     segment_params = segment_standard,
-    monthly_loans = c(10, 10, 10), 
-    vintage_date = as.Date("2025-01-01") # first day of the month of the sales
-  ),
-  # NEW: Plan for the early payers starting in Q2
-  q2_2025_early = list(
-    product_params = product_mtp,
-    segment_params = segment_pay_early,
-    monthly_loans = c(10, 10, 10),
-    vintage_date = as.Date("2025-04-01") # first day of the month of the sales
+    # monthly_loans = c(10, 10, 10),
+    monthly_loans = c(57, 171, 288, 148, 137, 246, 164, 144, 178),
+    vintage_date = as.Date("2024-12-01") # first day of the month of the sales
   )
+  # # NEW: Plan for the early payers starting in Q2
+  # q2_2025_early = list(
+  #   product_params = product_mtp,
+  #   segment_params = segment_pay_early,
+  #   monthly_loans = c(10, 10, 10),
+  #   vintage_date = as.Date("2025-04-01") # first day of the month of the sales
+  # )
 )
 
 ```
